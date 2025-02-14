@@ -1,9 +1,9 @@
 $primary: #060C14;
 $secondary: white;
-$background: #0F2137;
+$background: #6afab0;
 $primaryLight: #1E334F;
 $hover: #5F8CC7;
-$error: #F18B7E;
+$error: #fe7866;
 
 $font: 'YS Text', Roboto, Helvetica, Arial, sans-serif;
 $titleFont: 'Garamond', sans-serif;
@@ -11,15 +11,15 @@ $fontMono: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 $baseFontSize: 20px;
 $baseFontColor: white;
 
-$category1: #83FA9D;
-$category2: #FAD883;
-$category3: #B783FA;
-$category4: #83DDFA;
-$category5: #FAA083;
+$category1: #13fb45;
+$category2: #ffd13c;
+$category3: #72c2ff;
+$category4: #f488e7;
+$category5: #f87e7e;
 
 $mainFontSize: 1.5em;
 $titleFontSize: 2.5em;
-$headerElementsSize: 4.5rem;
+$headerElementsSize: 4rem;
 $headerHeight: 9rem;
 
 $maxPageWidth: 1320px;
@@ -27,5 +27,5 @@ $defaultPadding: 2.4rem;
 
 $defaultBorderRadius: 3rem;
 $defaultBorder: 2px solid $primaryLight;
-$hoverBorder: 2px solid white;
+$hoverBorder: 2px solid rgb(0, 255, 34);
 $overlayBackground: rgba(0, 0, 0, 0.8);
