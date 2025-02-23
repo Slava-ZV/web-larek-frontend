@@ -25,12 +25,6 @@ export class Order extends Form<IOrderForm> {
             const value = target.name;
             this.events.emit(`${this.container.name}:change`, {field, value});
         });
-
-        this.container.addEventListener('submit', (evt) =>{
-            evt.preventDefault();
-            this.events.emit(`${this.container.name}:submit`)
-        })
-        
     }
 
     set address(value: string){
@@ -43,64 +37,3 @@ export class Order extends Form<IOrderForm> {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import {Form} from "./common/Form";
-// import {IOrderForm} from "../types";
-// import {EventEmitter, IEvents} from "./base/events";
-// import {ensureElement} from "../utils/utils";
-
-
-
-// export class Order extends Form<IOrderForm> {
-//     protected _buttonCard: HTMLButtonElement;
-//     protected _buttonCash: HTMLButtonElement;
-
-
-//     constructor(container: HTMLFormElement, events: IEvents) {
-//         super(container, events);
-//         this._buttonCard = container.querySelector(`.button button_alt`);
-//         // this._buttonCash.addEventListener('', (event: MouseEvent) => {
-//             // actions?.onClick?.(event);})
-//         // this._buttonCard.addEventListener('click', () => this.events.emit('selectBuy:select'));
-//         // this._buttonCard.addEventListener('click', () => this.events.emit('selectBuy:select'));
-//     }
-//     set adress(value: string) {
-//         (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
-//     }
-
-//     set buttonCard(value: string) {
-//         this.container.elements.namedItem('card') as HTMLButtonElement;
-//     }
-
-//     set buttonCash(value: string) {
-//         this.container.elements.namedItem('cash') as HTMLButtonElement;
-//     }
-// }

@@ -12,7 +12,6 @@ export type TProductBasket = Pick< IProduct, 'title'  |'price'>;
 
 export interface IAppState {
     catalog: IProduct[];
-    basket: IProduct[];
     preview: string | null;
     order: IOrder | null;
 }
@@ -27,7 +26,9 @@ export interface IContactsForm {
     phone: string;
 }
 
-export type IOrder =  IOrderForm & IContactsForm & {items: string[], total: number};
+export type IOrder = IOrderForm & IContactsForm & {items: string[]};
+
+export type IOrderData =  IOrder & {total: number};
 
 export type ContactsFormErrors = Partial<Record<keyof IContactsForm, string>>;
 

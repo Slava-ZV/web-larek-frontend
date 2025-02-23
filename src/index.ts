@@ -1,11 +1,11 @@
 import './scss/styles.scss';
-import { AuctionAPI} from "./components/AppApi";
-import {API_URL, CDN_URL, CategoryColor} from "./utils/constants";
+import { AuctionApi} from "./components/AuctionApi";
+import {API_URL, CDN_URL} from "./utils/constants";
 import {EventEmitter} from "./components/base/events";
 import {AppState, CatalogChangeEvent} from "./components/AppData";
 import {Page} from "./components/Page";
-import {PreviewItem, CatalogItem, BasketItem} from "./components/Product";
-import {cloneTemplate, createElement, ensureElement} from './utils/utils';
+import {FullCard, CatalogCard, BasketItem} from "./components/Product";
+import {cloneTemplate, ensureElement} from './utils/utils';
 import {IOrder, IOrderForm, IProduct} from './types/index';
 import { Modal } from './components/common/Modal';
 import {Basket} from "./components/common/Basket";
@@ -15,12 +15,11 @@ import { Success} from './components/common/Success';
 import {IContactsForm} from "./types";
 
 const events = new EventEmitter();
-const api = new  AuctionAPI(CDN_URL, API_URL);
+const api = new AuctionApi(CDN_URL, API_URL);
 
 // Чтобы мониторить все события, для отладки
-// TODO: закомментировать
 events.onAll(({ eventName, data }) => {
-    console.log(eventName, data);
+    // console.log(eventName, data);
 })
 
 //объявление шаблонов
@@ -46,7 +45,6 @@ const modal = new Modal(document.querySelector('#modal-container') as HTMLElemen
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const success = new Success(cloneTemplate(successTemplate), {
     onClick: () => {
-        appData.clearBasket();
         modal.close();
     }
 });
@@ -54,7 +52,7 @@ const success = new Success(cloneTemplate(successTemplate), {
 // Изменение элементов каталога
 events.on<CatalogChangeEvent>('items:changed', () => {
     page.catalog = appData.catalog.map(item => {
-        const card = new CatalogItem(cloneTemplate(cardCatalogTemplate), {
+        const card = new CatalogCard(cloneTemplate(cardCatalogTemplate), {
             onClick: () => events.emit('card:select', item)
         });
         return card.render({
@@ -75,7 +73,7 @@ events.on('card:select', (item: IProduct) => {
 
 events.on('preview:changed', (item: IProduct) => {
     const showItem = (item: IProduct) => {
-        const card = new PreviewItem(cloneTemplate(cardPreviewTemplate),
+        const card = new FullCard(cloneTemplate(cardPreviewTemplate),
         {onClick: () =>{
             appData.addItem(item);
             card.inBasket();
@@ -100,14 +98,7 @@ events.on('preview:changed', (item: IProduct) => {
     };
 
     if (item) {
-        api.getProductItem(item.id)
-            .then((result) => {
-                item.description = result.description;
-                showItem(item);
-            })
-            .catch((err) => {
-                console.error(err);
-            })
+        showItem(item);
     } else {
         modal.close();
     }
@@ -115,9 +106,7 @@ events.on('preview:changed', (item: IProduct) => {
 
 
 events.on('basket:open', () => {
-    modal.render({
-        content: createElement<HTMLElement>('div', {},
-            basket.render())})
+    modal.render({content: basket.render()})
 });
 
 events.on('basket:changed', () => {
@@ -143,10 +132,11 @@ events.on('basket:delete', (data:{id: string}) => {
 });
 
 events.on('order:open', () => {
+    appData.clearCustomerInfo()
     modal.render({
         content: order.render({
-            payment: "",
-            address: "",
+            payment: appData.order.payment,
+            address: appData.order.address,
             valid: false,
             errors: []
         })
@@ -175,8 +165,8 @@ events.on('order:submit', () => {
     modal.close()
     modal.render({
         content: contacts.render({
-            email: "",
-            phone: "",
+            email: appData.order.email,
+            phone: appData.order.phone,
             valid: false,
             errors: []
         })
@@ -200,7 +190,7 @@ events.on(/^contacts\..*:change/, (data: { field: keyof IContactsForm, value: st
 
 // Отправлена форма заказа
 events.on('contacts:submit', () => {
-    api.orderProducts(appData.order)
+    api.orderProducts({...appData.order, total: appData.getTotal()})
         .then((result) => {
             modal.render({
                 content: success.render({
@@ -209,7 +199,6 @@ events.on('contacts:submit', () => {
                 
             });
             appData.clearBasket();
-            basket.render()
         })
         .catch(err => {
             console.error(err);

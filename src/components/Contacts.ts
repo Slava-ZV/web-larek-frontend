@@ -13,11 +13,6 @@ export class Contacts extends Form<IContactsForm> {
 
         this.formErrors = ensureElement('.form__errors', this.container) as HTMLSpanElement;
         this.orderButton = ensureElement('button[type="submit"]', this.container) as HTMLButtonElement;
-
-        this.container.addEventListener('submit', (evt) =>{
-            evt.preventDefault();
-            this.events.emit(`${this.container.name}:submit`)
-        })
     }
 
     set phone(value: string) {

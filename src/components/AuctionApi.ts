@@ -1,13 +1,14 @@
 import { IProduct } from "../types";
 import { Api, ApiListResponse } from "./base/api";
-import {IOrder, IOrderResult} from "../types";
+import {IOrderData, IOrderResult} from "../types";
 
 export interface IProductAPI {
     getProductList: () => Promise<IProduct[]>;
     getProductItem: (id: string) => Promise<IProduct>;
+    orderProducts: (order: IOrderData) => Promise<IOrderResult>;
 }
 
-export class AuctionAPI extends Api implements IProductAPI {
+export class AuctionApi extends Api implements IProductAPI {
 
     readonly cdn: string;
 
@@ -34,7 +35,7 @@ export class AuctionAPI extends Api implements IProductAPI {
         );
     }
 
-    orderProducts(order: IOrder): Promise<IOrderResult> {
+    orderProducts(order: IOrderData): Promise<IOrderResult> {
         console.log(order);
         return this.post('/order', order).then(
             (data: IOrderResult) => {console.log('data');

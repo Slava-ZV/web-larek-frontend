@@ -13,8 +13,7 @@ export class AppState extends Model<IAppState> {
         address: "",
         email: "",
         phone: "",
-        items: [],
-        total: null
+        items: []
     };
     preview: string | null;
     
@@ -56,8 +55,7 @@ export class AppState extends Model<IAppState> {
         for ( let i = 0; i < this.order.items.length; i++){
             count += this.catalog.find(card => card.id === this.order.items[i]).price
         }
-        this.order.total = count;
-        return this.order.total;
+        return count;
     }
 
     getBasket(): string[]{
@@ -106,12 +104,15 @@ export class AppState extends Model<IAppState> {
         return this.order.items.some(item => item === id);
     }
 
-    clearBasket() {
-        this.order.items = [];
+    clearCustomerInfo() {
         this.order.address = '';
         this.order.email = '';
         this.order.payment = '';
         this.order.phone = '';
+    }
+
+    clearBasket() {
+        this.order.items = [];
         this.emitChanges('basket:changed', this.order.items);
     }
 }

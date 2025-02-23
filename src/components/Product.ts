@@ -7,7 +7,7 @@ interface IProductCard {
     onClick: (event: MouseEvent) => void;
 }
 
-export interface ICard<T> {
+export interface ICard {
     title: string;
     price: number;
     category?: string;
@@ -15,27 +15,17 @@ export interface ICard<T> {
     image?: string;
 }
 
-export class Card<T> extends Component<ICard<T>> {
-    
+export class Card extends Component<ICard> {
     protected _title: HTMLElement;
     protected _price: HTMLElement;
-    protected _category?: HTMLElement;
     protected _button?: HTMLButtonElement;
-    
-    constructor(container: HTMLElement, actions?: IProductCard) {
+
+    constructor(container: HTMLElement) {
         super(container);
 
         this._title = ensureElement<HTMLElement>(`.card__title`, container);
         this._price = ensureElement<HTMLElement>(`.card__price`, container);
         this._button = container.querySelector(`.card__button`);
-
-        if (actions?.onClick) {
-            if (this._button) {
-                this._button.addEventListener('click', actions.onClick);
-            } else {
-                container.addEventListener('click', actions.onClick);
-            }
-        }
     }
 
     //для сохранения id карточки
@@ -64,6 +54,35 @@ export class Card<T> extends Component<ICard<T>> {
             this.setText(this._price, `${value} синапсов`);
         }
     }
+}
+
+export class CatalogCard extends Card {
+    protected _category: HTMLElement;
+    protected _image: HTMLImageElement;
+    
+    constructor(container: HTMLElement, actions?: IProductCard) {
+        super(container);
+
+        this._category = ensureElement<HTMLElement>(`.card__category`, container);
+        this._image =  ensureElement<HTMLImageElement>(`.card__image`, container);
+
+        if (actions?.onClick) {
+            if (this._button) {
+                this._button.addEventListener('click', actions.onClick);
+            } else {
+                container.addEventListener('click', actions.onClick);
+            }
+        }
+    }
+
+    set category(value: string) {
+        this.setColor(value);
+        this.setText(this._category,value);
+    }
+
+    set image(value: string) {
+        this.setImage(this._image, value, this.title)
+    }
 
     setColor(category: string){
         const color = (Object.keys(CategoryColor) as (keyof typeof CategoryColor)[])
@@ -76,57 +95,17 @@ export class Card<T> extends Component<ICard<T>> {
 
 }
 
-export type TCatalogItem = {
-    image: HTMLImageElement;
-    category: HTMLElement;
-};
-
-export class CatalogItem extends Card<TCatalogItem> {
-    protected _category: HTMLElement;
-    protected _image: HTMLImageElement;
-
-    constructor(container: HTMLElement, actions?: IProductCard) {
-        super(container, actions);
-        this._image =  ensureElement<HTMLImageElement>(`.card__image`, container);
-        this._category = ensureElement<HTMLElement>(`.card__category`, container);
-    }
-
-    set category(value: string) {
-        this.setColor(value);
-        this.setText(this._category,value);
-    }
-
-    set image(value: string) {
-        this.setImage(this._image, value, this.title)
-    }
-}
-
-
-export class PreviewItem extends Card<HTMLElement> {
-    protected _category: HTMLElement;
-    protected _image: HTMLImageElement;
+export class FullCard extends CatalogCard {
     protected _description: HTMLElement;
 
     constructor(container: HTMLElement, actions?: IProductCard) {
         super(container, actions);
-        this._image =  ensureElement<HTMLImageElement>(`.card__image`, container);
+
         this._description = ensureElement<HTMLElement>(`.card__text`, container);
-        this._category = ensureElement<HTMLElement>(`.card__category`, container);
-
-        this._button = container.querySelector(`.card__button`);
-    }
-
-    set image(value: string) {
-        this.setImage(this._image, value, this.title)
     }
 
     set description(value: string) {
         this.setText(this._description, value);
-    }
-
-    set category(value: string) {
-        this.setColor(value);
-        this.setText(this._category,value);
     }
     
     inBasket() {
@@ -140,19 +119,15 @@ export class PreviewItem extends Card<HTMLElement> {
     }
 }
 
-export interface IProductBasket {
-    сount: number;
-}
-
-export class BasketItem extends Card<IProductBasket> {
+export class BasketItem extends Card {
     protected _count: HTMLElement;
 
     constructor(container: HTMLElement, actions?: IProductCard) {
-        super(container, actions);
+        super(container);
 
         this._count = container.querySelector(`.basket__item-index`)
-        this._button = container.querySelector(`.card__button`);
-        this._button.addEventListener('basket:delete', (event: MouseEvent) => {
+
+        this._button.addEventListener('click', (event: MouseEvent) => {
             actions?.onClick?.(event);})
     }
 
@@ -161,4 +136,3 @@ export class BasketItem extends Card<IProductBasket> {
     }
 
 }
-
